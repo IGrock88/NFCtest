@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
             assert tag != null;
             byte[] payload = detectTagData(tag).getBytes();
             Log.d("info", "get");
@@ -117,6 +118,14 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     MifareClassic mifareTag = MifareClassic.get(tag);
 
+                    mifareTag.connect();
+                    mifareTag.sectorToBlock(2);
+                    int blockCountInSector = mifareTag.getBlockCountInSector(1);
+                    Log.d("info", "isConnected: " + mifareTag.isConnected());
+                    Log.d("info", "blockCountInSector: " + blockCountInSector);
+//                    mifareTag.
+//                    byte[] test = mifareTag.readBlock(1);
+//                    Log.d("test", Arrays.toString(test));
                     switch (mifareTag.getType()) {
                         case MifareClassic.TYPE_CLASSIC:
                             type = "Classic";
