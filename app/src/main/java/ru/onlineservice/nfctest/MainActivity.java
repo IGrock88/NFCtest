@@ -7,6 +7,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.MifareUltralight;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,7 +24,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
+
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+//            MifareClassic mifareTag = MifareClassic.get(tag);
+//
+//            readByteFromCard(mifareTag);
 
             assert tag != null;
             byte[] payload = detectTagData(tag).getBytes();
-            Log.d("info", "get");
-            Log.d("info", Arrays.toString(payload));
+
         }
     }
 
@@ -119,10 +126,11 @@ public class MainActivity extends AppCompatActivity {
                     MifareClassic mifareTag = MifareClassic.get(tag);
 
                     mifareTag.connect();
-                    mifareTag.sectorToBlock(2);
-                    int blockCountInSector = mifareTag.getBlockCountInSector(1);
-                    Log.d("info", "isConnected: " + mifareTag.isConnected());
-                    Log.d("info", "blockCountInSector: " + blockCountInSector);
+//                    mifareTag.authenticateSectorWithKeyA(4, MifareClassic.KEY_DEFAULT);
+//                    byte[] data = mifareTag.readBlock(mifareTag.sectorToBlock(4) + 3);
+//                    Log.d("test", "data: " + Arrays.toString(data));
+                    readByteFromCard(mifareTag);
+
 //                    mifareTag.
 //                    byte[] test = mifareTag.readBlock(1);
 //                    Log.d("test", Arrays.toString(test));
@@ -175,6 +183,42 @@ public class MainActivity extends AppCompatActivity {
         Log.v("test",sb.toString());
         return sb.toString();
     }
+
+    private void readByteFromCard(MifareClassic mifareTag) {
+        try {
+            while (!mifareTag.isConnected()){
+                Log.d("test", "wait");
+                mifareTag.connect();
+            }
+
+            Log.d("test", "go");
+            int countSectors = mifareTag.getSectorCount();
+            Log.d("test", String.valueOf(countSectors));
+            for (int i = 0; i <= countSectors; i++){
+                boolean auth = mifareTag.authenticateSectorWithKeyA(i, MifareClassic.KEY_DEFAULT);
+//                if (!auth) continue;
+                Log.d("test", "auth: " + String.valueOf(auth));
+                int blockCountInSector = mifareTag.getBlockCountInSector(i);
+                Log.d("test", "blockCountInSector: " + blockCountInSector);
+                int firstBlock = mifareTag.sectorToBlock(i);
+                Log.d("test", "firstBlock" + firstBlock);
+                for (int j = firstBlock; j <= firstBlock + blockCountInSector - 1; j++){
+                    byte[] data = mifareTag.readBlock(j);
+
+                    Log.d("test", "block - " + j + " data: " + Arrays.toString(data));
+                }
+            }
+
+
+        }catch (Exception e){
+            e.getStackTrace();
+
+            if (e.getMessage() != null)
+            Log.d("test", Objects.requireNonNull(e.getMessage()));
+        }
+
+    }
+
     private String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = bytes.length - 1; i >= 0; --i) {
