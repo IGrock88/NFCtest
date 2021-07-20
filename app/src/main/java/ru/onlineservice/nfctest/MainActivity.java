@@ -2,33 +2,21 @@ package ru.onlineservice.nfctest;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.nfc.NdefMessage;
+
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+
 import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.os.Parcelable;
-import android.util.Log;
-import android.view.View;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Objects;
-
-import static java.lang.Thread.sleep;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +43,24 @@ public class MainActivity extends AppCompatActivity {
 //            readByteFromCard(mifareTag);
 
             assert tag != null;
-            byte[] payload = detectTagData(tag).getBytes();
+
+            NfcMifareClassicIO nfcMifareClassicIO = null;
+            try {
+                nfcMifareClassicIO = new NfcMifareClassicIO(tag);
+                MifareBlock mifareBlock = new MifareBlock();
+                mifareBlock.setSector(1);
+                mifareBlock.setBlock(4);
+                mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
+                mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+                byte[] data = {16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("20FBFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
+                nfcMifareClassicIO.writeBlock(mifareBlock);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            byte[] payload = nfcMifareClassicIO.detectTagData(tag).getBytes();
+
+
 
         }
     }
@@ -99,173 +104,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private String detectTagData(Tag tag) {
-        StringBuilder sb = new StringBuilder();
-        byte[] id = tag.getId();
-        sb.append("ID (hex): ").append(toHex(id)).append('\n');
-        sb.append("ID (reversed hex): ").append(toReversedHex(id)).append('\n');
-        sb.append("ID (dec): ").append(toDec(id)).append('\n');
-        sb.append("ID (reversed dec): ").append(toReversedDec(id)).append('\n');
-
-        String prefix = "android.nfc.tech.";
-        sb.append("Technologies: ");
-        for (String tech : tag.getTechList()) {
-            sb.append(tech.substring(prefix.length()));
-            sb.append(", ");
-        }
-
-        sb.delete(sb.length() - 2, sb.length());
-
-        for (String tech : tag.getTechList()) {
-            if (tech.equals(MifareClassic.class.getName())) {
-                sb.append('\n');
-                String type = "Unknown";
-
-                try {
-                    MifareClassic mifareTag = MifareClassic.get(tag);
-
-                    mifareTag.connect();
-//                    mifareTag.authenticateSectorWithKeyA(4, MifareClassic.KEY_DEFAULT);
-//                    byte[] data = mifareTag.readBlock(mifareTag.sectorToBlock(4) + 3);
-//                    Log.d("test", "data: " + Arrays.toString(data));
-                    readByteFromCard(mifareTag);
-
-//                    mifareTag.
-//                    byte[] test = mifareTag.readBlock(1);
-//                    Log.d("test", Arrays.toString(test));
-                    switch (mifareTag.getType()) {
-                        case MifareClassic.TYPE_CLASSIC:
-                            type = "Classic";
-                            break;
-                        case MifareClassic.TYPE_PLUS:
-                            type = "Plus";
-                            break;
-                        case MifareClassic.TYPE_PRO:
-                            type = "Pro";
-                            break;
-                    }
-                    sb.append("Mifare Classic type: ");
-                    sb.append(type);
-                    sb.append('\n');
-
-                    sb.append("Mifare size: ");
-                    sb.append(mifareTag.getSize() + " bytes");
-                    sb.append('\n');
-
-                    sb.append("Mifare sectors: ");
-                    sb.append(mifareTag.getSectorCount());
-                    sb.append('\n');
-
-                    sb.append("Mifare blocks: ");
-                    sb.append(mifareTag.getBlockCount());
-                } catch (Exception e) {
-                    sb.append("Mifare classic error: " + e.getMessage());
-                }
-            }
-
-            if (tech.equals(MifareUltralight.class.getName())) {
-                sb.append('\n');
-                MifareUltralight mifareUlTag = MifareUltralight.get(tag);
-                String type = "Unknown";
-                switch (mifareUlTag.getType()) {
-                    case MifareUltralight.TYPE_ULTRALIGHT:
-                        type = "Ultralight";
-                        break;
-                    case MifareUltralight.TYPE_ULTRALIGHT_C:
-                        type = "Ultralight C";
-                        break;
-                }
-                sb.append("Mifare Ultralight type: ");
-                sb.append(type);
-            }
-        }
-        Log.v("test",sb.toString());
-        return sb.toString();
-    }
-
-    private void readByteFromCard(MifareClassic mifareTag) {
-        try {
-            while (!mifareTag.isConnected()){
-                Log.d("test", "wait");
-                mifareTag.connect();
-            }
-
-            Log.d("test", "go");
-            int countSectors = mifareTag.getSectorCount();
-            Log.d("test", String.valueOf(countSectors));
-            for (int i = 0; i <= countSectors; i++){
-                boolean auth = mifareTag.authenticateSectorWithKeyA(i, MifareClassic.KEY_DEFAULT);
-//                if (!auth) continue;
-                Log.d("test", "auth: " + String.valueOf(auth));
-                int blockCountInSector = mifareTag.getBlockCountInSector(i);
-                Log.d("test", "blockCountInSector: " + blockCountInSector);
-                int firstBlock = mifareTag.sectorToBlock(i);
-                Log.d("test", "firstBlock" + firstBlock);
-                for (int j = firstBlock; j <= firstBlock + blockCountInSector - 1; j++){
-                    byte[] data = mifareTag.readBlock(j);
-
-                    Log.d("test", "block - " + j + " data: " + Arrays.toString(data));
-                }
-            }
-
-
-        }catch (Exception e){
-            e.getStackTrace();
-
-            if (e.getMessage() != null)
-            Log.d("test", Objects.requireNonNull(e.getMessage()));
-        }
-
-    }
-
-    private String toHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-            if (i > 0) {
-                sb.append(" ");
-            }
-        }
-        return sb.toString();
-    }
-
-    private String toReversedHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            if (i > 0) {
-                sb.append(" ");
-            }
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-        }
-        return sb.toString();
-    }
-
-    private long toDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = 0; i < bytes.length; ++i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
-
-    private long toReversedDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
 }
