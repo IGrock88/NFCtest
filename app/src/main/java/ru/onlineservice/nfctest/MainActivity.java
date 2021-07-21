@@ -7,16 +7,18 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 
 import android.nfc.tech.MifareClassic;
+import android.os.Build;
 import android.os.Bundle;
 
 
-
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     PendingIntent pendingIntent;
     final static String TAG = "nfc_test";
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         resolveIntent(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void resolveIntent(Intent intent) {
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
@@ -52,9 +56,17 @@ public class MainActivity extends AppCompatActivity {
                 mifareBlock.setBlock(4);
                 mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
                 mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
-                byte[] data = {16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("20FBFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
+                String txt = "Gomoz";
+
+                String hex = StringUtil.toHexFromString(txt);
+                Log.d("info", hex);
+                byte[] bytes = StringUtil.hexStringToByteArray(hex);
+                mifareBlock.setData(bytes);
                 nfcMifareClassicIO.writeBlock(mifareBlock);
+
+                String result = new String(bytes, StandardCharsets.UTF_8);
+                Log.d("info", result);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
