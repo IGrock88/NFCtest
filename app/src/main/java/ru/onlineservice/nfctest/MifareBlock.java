@@ -1,6 +1,9 @@
 package ru.onlineservice.nfctest;
 
-public class MifareBlock {
+import androidx.annotation.NonNull;
+
+
+public class MifareBlock implements Cloneable {
 
     private byte[] data;
     private int sector;
@@ -46,5 +49,11 @@ public class MifareBlock {
 
     public void setKeyB(byte[] keyB) {
         this.keyB = keyB;
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

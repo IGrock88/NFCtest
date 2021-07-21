@@ -154,6 +154,18 @@ public class NfcMifareClassicIO {
 
     }
 
+    public MifareBlock readBlock(MifareBlock block) throws Exception {
+        MifareBlock result = new MifareBlock();
+        if (isConnected()){
+            if (!authSector(block.getSector(), block.getKeyA(), block.getKeyB())){
+                throw new Exception("Авторизация не прошла");
+            }
+            result = (MifareBlock)block.clone();
+            result.setData(mifareTag.readBlock(block.getBlock()));
+        }
+        return result;
+    }
+
     private boolean authSector(int sector, byte[] keyA, byte[] keyB) throws IOException {
         return mifareTag.authenticateSectorWithKeyA(sector, keyA) && mifareTag.authenticateSectorWithKeyB(sector, keyB);
     }
@@ -161,6 +173,8 @@ public class NfcMifareClassicIO {
     private boolean isConnected() {
         return mifareTag.isConnected();
     }
+
+
 
 
     private void readAllByteFromCard(MifareClassic mifareTag) {
@@ -171,9 +185,6 @@ public class NfcMifareClassicIO {
             }
 
             Log.d("test", "go");
-            mifareTag.authenticateSectorWithKeyA(15, MifareClassic.KEY_DEFAULT);
-            byte[] data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            mifareTag.writeBlock(60, data);
 
             int countSectors = mifareTag.getSectorCount();
             Log.d("test", String.valueOf(countSectors));
@@ -205,7 +216,7 @@ public class NfcMifareClassicIO {
 
     }
 
-    private String toHex(byte[] bytes) {
+    public String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = bytes.length - 1; i >= 0; --i) {
             int b = bytes[i] & 0xff;
@@ -219,7 +230,7 @@ public class NfcMifareClassicIO {
         return sb.toString();
     }
 
-    private String toReversedHex(byte[] bytes) {
+    public String toReversedHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bytes.length; ++i) {
             if (i > 0) {
