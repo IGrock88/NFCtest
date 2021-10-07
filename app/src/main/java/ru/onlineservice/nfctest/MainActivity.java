@@ -61,34 +61,34 @@ public class MainActivity extends AppCompatActivity {
             try {
                 nfcMifareClassicIO = new NfcMifareClassicIO(tag);
 
-                MifareBlock mifareBlock = new MifareBlock();
-                int sector = 1;
-                int block = 3;
-                mifareBlock.setSector(1);
-                mifareBlock.setBlock(6);
-                mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-                mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
-
-                MifareBlock result = nfcMifareClassicIO.readBlock(mifareBlock);
-                Log.d("info", Arrays.toString(result.getData()));
-//                Charset fromCharset = StandardCharsets.UTF_8;
-//                Charset toCharset = Charset.forName("cp866");
-                byte[] bytes = result.getData();
-
-
-
-                String resulttxt = nfcMifareClassicIO.toReversedHex(bytes).replace(" ", "");
-
+//                MifareBlock mifareBlock = new MifareBlock();
+//                int sector = 1;
+//                int block = 3;
+//                mifareBlock.setSector(1);
+//                mifareBlock.setBlock(6);
+//                mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
+//                mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
 //
-//                byte[] result1 = Arrays.copyOfRange(bytes, 5, 10);
+//                MifareBlock result = nfcMifareClassicIO.readBlock(mifareBlock);
+//                Log.d("info", Arrays.toString(result.getData()));
+////                Charset fromCharset = StandardCharsets.UTF_8;
+////                Charset toCharset = Charset.forName("cp866");
+//                byte[] bytes = result.getData();
 //
-//                BigInteger bigInteger = new BigInteger(result1);
 //
-                Log.d("info", resulttxt);
-                Log.d("info", String.format("%s-%s-%s-%s-%s", resulttxt.substring(8,16), resulttxt.substring(4,8), resulttxt.substring(0,4), resulttxt.substring(16,20), resulttxt.substring(20)));
 //
-//                List<MifareBlock> blockList = getMifareBlocks(nfcMifareClassicIO);
-//                nfcMifareClassicIO.writeBlocks(blockList);
+//                String resulttxt = nfcMifareClassicIO.toReversedHex(bytes).replace(" ", "");
+//
+////
+////                byte[] result1 = Arrays.copyOfRange(bytes, 5, 10);
+////
+////                BigInteger bigInteger = new BigInteger(result1);
+////
+//                Log.d("info", resulttxt);
+//                Log.d("info", String.format("%s-%s-%s-%s-%s", resulttxt.substring(8,16), resulttxt.substring(4,8), resulttxt.substring(0,4), resulttxt.substring(16,20), resulttxt.substring(20)));
+//
+                List<MifareBlock> blockList = getMifareBlocks(nfcMifareClassicIO);
+                nfcMifareClassicIO.writeBlocks(blockList);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -152,6 +152,22 @@ public class MainActivity extends AppCompatActivity {
         //sector 3
         mifareBlock.setSector(3);
         mifareBlock.setBlock(12);
+        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+
+        mifareBlock.setData(StringUtil.hexStringToByteArray("8ee1aaaee0a1a8ad0000000000000000"));
+        blockList.add((MifareBlock)mifareBlock.clone());
+
+        mifareBlock.setSector(3);
+        mifareBlock.setBlock(13);
+        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+
+        mifareBlock.setData(StringUtil.hexStringToByteArray("8ee1aaaee0a1a8ad0000000000000000"));
+        blockList.add((MifareBlock)mifareBlock.clone());
+
+        mifareBlock.setSector(3);
+        mifareBlock.setBlock(14);
         mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
         mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
 
