@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.nio.charset.StandardCharsets;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -27,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,35 +59,34 @@ public class MainActivity extends AppCompatActivity {
             try {
                 nfcMifareClassicIO = new NfcMifareClassicIO(tag);
 
-                MifareBlock mifareBlock = new MifareBlock();
-                int sector = 1;
-                int block = 3;
-                mifareBlock.setSector(1);
-                mifareBlock.setBlock(6);
-                mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-                mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
-
-                MifareBlock result = nfcMifareClassicIO.readBlock(mifareBlock);
-                Log.d("info", Arrays.toString(result.getData()));
-//                Charset fromCharset = StandardCharsets.UTF_8;
-//                Charset toCharset = Charset.forName("cp866");
-                byte[] bytes = result.getData();
-
-
-
-                String resulttxt = nfcMifareClassicIO.toReversedHex(bytes).replace(" ", "");
-
+//                MifareBlock mifareBlock = new MifareBlock();
+//                int sector = 1;
+//                int block = 3;
+//                mifareBlock.setSector(1);
+//                mifareBlock.setBlock(6);
+//                mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
+//                mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
 //
-//                byte[] result1 = Arrays.copyOfRange(bytes, 5, 10);
+//                MifareBlock result = nfcMifareClassicIO.readBlock(mifareBlock);
+//                Log.d("info", Arrays.toString(result.getData()));
+////                Charset fromCharset = StandardCharsets.UTF_8;
+////                Charset toCharset = Charset.forName("cp866");
+//                byte[] bytes = result.getData();
 //
-//                BigInteger bigInteger = new BigInteger(result1);
 //
-                Log.d("info", resulttxt);
-                Log.d("info", String.format("%s-%s-%s-%s-%s", resulttxt.substring(8,16), resulttxt.substring(4,8), resulttxt.substring(0,4), resulttxt.substring(16,20), resulttxt.substring(20)));
 //
-//                List<MifareBlock> blockList = getMifareBlocks(nfcMifareClassicIO);
-//                nfcMifareClassicIO.writeBlocks(blockList);
-
+//                String resulttxt = nfcMifareClassicIO.toReversedHex(bytes).replace(" ", "");
+//
+////
+////                byte[] result1 = Arrays.copyOfRange(bytes, 5, 10);
+////
+////                BigInteger bigInteger = new BigInteger(result1);
+////
+//                Log.d("info", resulttxt);
+//                Log.d("info", String.format("%s-%s-%s-%s-%s", resulttxt.substring(8,16), resulttxt.substring(4,8), resulttxt.substring(0,4), resulttxt.substring(16,20), resulttxt.substring(20)));
+//
+                List<MifareBlock> blockList = getMifareBlocks(nfcMifareClassicIO);
+                nfcMifareClassicIO.writeBlocks(blockList);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,75 +103,143 @@ public class MainActivity extends AppCompatActivity {
 
         MifareBlock mifareBlock = new MifareBlock();
 
-        //sector 1
+//        //sector 1
         mifareBlock.setSector(1);
         mifareBlock.setBlock(4);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("000000000302b557a9f705506ab9656d"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("000000000206627c96930dfbc0c4166d"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
 
         mifareBlock.setSector(1);
         mifareBlock.setBlock(5);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("012f0db0013464200000000001525500"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("012dad53013461b50000000001525500"));
         blockList.add((MifareBlock) mifareBlock.clone());
 
         mifareBlock.setSector(1);
         mifareBlock.setBlock(6);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("46e47f0355507bf99e0fe33c5207ce7d"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("4b31489e804c5710902eeaeafffd593d"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
-        //sector 2
+        //trail
+//        mifareBlock.setSector(1);
+//        mifareBlock.setBlock(7);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffff70f0f869fffffffffff0"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
+
+//        mifareBlock.setSector(15);
+//        mifareBlock.setBlock(62);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffffffffffffffffffffffff"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
+//
+//        mifareBlock.setSector(15);
+//        mifareBlock.setBlock(63);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("0fffffffffff00f87f690fffffffffff"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
+
+//        //sector 2
         mifareBlock.setSector(2);
         mifareBlock.setBlock(8);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("00003900000000010000000100000209"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("00003a65000000020000000100000209"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         mifareBlock.setSector(2);
         mifareBlock.setBlock(9);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("3b643015d47182fe2aa6d36877c44cb8"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("b655d8db86bc3996a3caea4f0b1ff567"));
         blockList.add((MifareBlock)mifareBlock.clone());
+
+        mifareBlock.setSector(2);
+        mifareBlock.setBlock(10);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
+
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("01000000000000000000000000000000"));
+        blockList.add((MifareBlock)mifareBlock.clone());
+
+        //trail
+//        mifareBlock.setSector(2);
+//        mifareBlock.setBlock(11);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffff70f0f869fffffffffff0"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
 
         //sector 3
         mifareBlock.setSector(3);
         mifareBlock.setBlock(12);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("8ee1aaaee0a1a8ad0000000000000000"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("90ebaca0e0a5adaaae00000000000000"));
         blockList.add((MifareBlock)mifareBlock.clone());
+
+        //trail
+//        mifareBlock.setSector(3);
+//        mifareBlock.setBlock(15);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffff70f0f869fffffffffff0"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
 
         //sector 5
         mifareBlock.setSector(5);
         mifareBlock.setBlock(20);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("91a5e0a3a5a900000000000000000000"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("88a3aee0ec0000000000000000000000"));
         blockList.add((MifareBlock)mifareBlock.clone());
+
+        //trail
+//        mifareBlock.setSector(5);
+//        mifareBlock.setBlock(23);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffff70f0f869fffffffffff0"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
 
         //sector 7
         mifareBlock.setSector(7);
         mifareBlock.setBlock(28);
-        mifareBlock.setKeyA(MifareClassic.KEY_DEFAULT);
-        mifareBlock.setKeyB(MifareClassic.KEY_DEFAULT);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(StringUtil.hexStringToByteArray("80aba5aae1a0ada4e0aea2a8e7000000"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("80aba5aae1a0ada4e0aea2a8e7000000"));
         blockList.add((MifareBlock)mifareBlock.clone());
+        //trail
+//        mifareBlock.setSector(7);
+//        mifareBlock.setBlock(31);
+//        mifareBlock.setKeyA(KEYS.KEY_A);
+//        mifareBlock.setKeyB(KEYS.KEY_B);
+//
+//        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("ffffffffffff70f0f869fffffffffff0"));
+//        blockList.add((MifareBlock)mifareBlock.clone());
         return blockList;
     }
 
