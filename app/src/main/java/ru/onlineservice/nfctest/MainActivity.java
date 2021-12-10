@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("000000000208f2aaf48e0dfbc0c4166d"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("000000000206627c96930dfbc0c4166d"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
 
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("4f2ad50b7361cf14bd9870a485a87e99"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("4b31489e804c5710902eeaeafffd593d"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         //trail
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("00003a18000000020000000100000209"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("00003a65000000020000000100000209"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         mifareBlock.setSector(2);
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("3d57f8996a480963a74edd6769a06faf"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("b655d8db86bc3996a3caea4f0b1ff567"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         mifareBlock.setSector(2);
@@ -194,7 +194,23 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("90ebacaee0a5adaaae00000000000000"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("90ebaca0e0a5adaaae00000000000000"));
+        blockList.add((MifareBlock)mifareBlock.clone());
+
+        mifareBlock.setSector(3);
+        mifareBlock.setBlock(13);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
+
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("00000000000000000000000000000000"));
+        blockList.add((MifareBlock)mifareBlock.clone());
+
+        mifareBlock.setSector(3);
+        mifareBlock.setBlock(14);
+        mifareBlock.setKeyA(KEYS.KEY_A);
+        mifareBlock.setKeyB(KEYS.KEY_B);
+
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("00000000000000000000000000000000"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         //trail
