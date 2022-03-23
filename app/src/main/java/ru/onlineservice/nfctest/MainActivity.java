@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -25,7 +26,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
+import ru.evotor.integration.IntegrationImpl;
+import ru.evotor.integration.entities.receipt.OperationType_V1;
+import ru.evotor.integration.entities.receipt.Receipt_V1;
+import ru.evotor.integration.entities.receipt.position.Position_V1;
+import ru.evotor.integration.entities.receipt.position.Type_V1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -100,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
     private List<MifareBlock> getMifareBlocks(NfcMifareClassicIO nfcMifareClassicIO) throws CloneNotSupportedException {
         List<MifareBlock> blockList = new ArrayList<>();
 
+        String data = getData();
+
+
+
+        //Log.d("debugLog", data);
+
 
         MifareBlock mifareBlock = new MifareBlock();
 
@@ -168,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         mifareBlock.setKeyA(KEYS.KEY_A);
         mifareBlock.setKeyB(KEYS.KEY_B);
 
-        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("b655d8db86bc3996a3caea4f0b1ff567"));
+        mifareBlock.setData(nfcMifareClassicIO.hexStringToByteArray("259207f3ca74b64efd787a3aef0c0c67"));
         blockList.add((MifareBlock)mifareBlock.clone());
 
         mifareBlock.setSector(2);
@@ -259,6 +274,49 @@ public class MainActivity extends AppCompatActivity {
         return blockList;
     }
 
+    private String getData() {
+        return "Сектор 1\n" +
+                "000000000606332fd9b80f83e2b3246d\n" +
+                "012bff3e013461b50000000001525500\n" +
+                "4f7a8fc7e678e98aa60e113bbc6bd247\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 2\n" +
+                "00003a1a000000020000000100000209\n" +
+                "1ed895baff5161d1e01c70d4ff4cb565\n" +
+                "01000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 3\n" +
+                "8fe3e8aaa8ad00000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 4\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 5\n" +
+                "80aba5aae1a0ada4e000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 6\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 7\n" +
+                "91a5e0a3a5a5a2a8e700000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff\n" +
+                "Сектор 8\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "00000000000000000000000000000000\n" +
+                "ffffffffffffff078069ffffffffffff";
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -282,6 +340,60 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        try {
+            IntegrationImpl evotor = new IntegrationImpl();
+            List<Position_V1> position_v1s = new ArrayList<Position_V1>(){
+                {
+                    add(new Position_V1(
+                            new BigDecimal(2),
+                            "билет",
+                            "шт.", BigDecimal.ONE,
+                            "NO_VAT",
+                            UUID.randomUUID().toString(),
+                            Type_V1.NORMAL,
+                            new BigDecimal(1)));
+                }
+            };
+            evotor.startPayment(new Receipt_V1(
+                    UUID.randomUUID().toString(),
+                    position_v1s,
+                    "a@e.ru",
+                    null,
+                    false,
+                    OperationType_V1.SELL,
+                    "Невский пр.",
+                    "Невский пр.",
+                    null,
+                    null,
+                    new Date(),
+                    null
+            ));
+            evotor.handlePaymentResult(getActivityResultRegistry(), transactionResult -> {
+
+
+
+                return null;
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+//        String data = getData();
+//        data = data.replaceAll("[\\n][\\t]", "").replaceAll("Сектор([\\s][\\d])", "").replaceAll("[\\s]]+", "");
+//
+//        char[] chars = data.toCharArray();
+//        StringBuilder tmp = new StringBuilder();
+//        for (int i = 0; i < chars.length; i++){
+//            Log.d("debugLog", String.valueOf(chars[i]));
+//            tmp.append(chars[i]);
+//            if ((i % 132) == 1) {
+//                Log.d("debugLog", "-----------------");
+//                tmp.setLength(0);
+//            }
+//        }
+
+//
+//        Log.d("debugLog", data);
         //Initialise NfcAdapter
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         //If no NfcAdapter, display that the device has no NFC
